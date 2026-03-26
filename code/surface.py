@@ -3,14 +3,14 @@
 import cv2   as cv
 
 # basado en la demo pyqtgraph example: GLSurfacePlot
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph.Qt import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 import numpy as np
 
 
 ## Create a GL View widget to display data
-app = QtGui.QApplication([])
+app = QtWidgets.QApplication([])
 w = gl.GLViewWidget()
 w.show()
 w.setWindowTitle('gray level surface')
@@ -40,5 +40,4 @@ timer = QtCore.QTimer()
 timer.timeout.connect(update)
 timer.start(30)
 
-QtGui.QApplication.instance().exec_()
-
+app.exec()
