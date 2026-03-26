@@ -13,6 +13,13 @@ import cv2
 print(f'OpenCV .......... {cv2.__version__}')
 
 try:
+    import mediapipe
+    print(f'mediapipe ....... {mediapipe.__version__}')
+except:
+    print(f'mediapipe ....... NOT FOUND')
+
+
+try:
     import sympy
     print(f'sympy ........... {sympy.__version__}')
 except:
@@ -50,4 +57,3 @@ try:
     print(f'jax ............. {jax.__version__} {jax.default_backend()} {jax.devices()}')
 except:
     print(f'jax ............. NOT FOUND')
-
