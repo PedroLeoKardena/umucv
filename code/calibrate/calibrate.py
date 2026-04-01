@@ -16,6 +16,7 @@ img_points = []
 for _, frame in autoStream():
     img = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     h, w = img.shape
+    print(f"Resolución de la cámara: {w}x{h}")
     found, corners = cv.findChessboardCorners(img, pattern_size)
     if found:
         term = ( cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_COUNT, 30, 0.1 )

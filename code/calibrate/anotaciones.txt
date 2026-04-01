@@ -1,0 +1,36 @@
+Resolución: 1920x1080
+RMS = 1.4815032172392935
+
+Matriz de Cámara = [[1.098e+03 0.000e+00 9.490e+02]
+ [0.000e+00 1.092e+03 5.310e+02]
+ [0.000e+00 0.000e+00 1.000e+00]]
+
+Tener en cuenta que la Matriz de Cámara (K) es de la forma:
+[[fx, 0, cx],
+ [0, fy, cy],
+ [0, 0, 1]]
+
+Tenemos que fx = 1098 y fy = 1092, siendo estos valores casi identicos.
+La formula que nos aparece en la pagina del profesor para calcular el FOV en base a f es:
+
+tan(FOV/2) = (w/2)/f ->
+tan(FOV/2) = w/2f ->
+FOV/2 = arctan(w/2f) -> 
+FOV = 2 * arctan(w/2f)
+
+De modo que FOV se calculará como:
+FOV = 2 * arctan(w/2f)
+
+Donde w = resolución.
+
+Si nosotros tenemos que wx = resolución en x, y wy = resolución en y, entonces:
+
+FOVx = 2 * arctan(wx/2f)
+FOVy = 2 * arctan(wy/2f)
+
+De este modo: 
+FOVx = 2 * atan(1920/(2*1098)) = 2 * atan(1920/2196) = 1.4368860055 rad = 82.33 grados
+FOVy = 2 * atan(1080/(2*1092)) = 2 * atan(1080/2184) = 0.9182967739 rad = 52.61 grados
+
+Coeficientes de distorsión = [-0.077  0.319 -0.001 -0.004 -0.365]
+
