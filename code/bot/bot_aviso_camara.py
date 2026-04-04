@@ -5,17 +5,32 @@
 import numpy as np
 import cv2 as cv
 from datetime import datetime
-from umucv.util import ROI, putText
+from umucv.util import ROI, putText, check_and_download, Slider
 from umucv.stream import autoStream
 
+from ultralytics import YOLO
+import yaml
+
 region = ROI("input")
-bgsub = cv.createBackgroundSubtractorMOG2(500, 16, False)
+
+model = YOLO("yolo11n.pt")
+
+# class labels:
+url = "https://raw.githubusercontent.com/ultralytics/ultralytics/refs/heads/main/ultralytics/cfg/datasets/coco.yaml"
+check_and_download("coco.yaml", url)
+labels = yaml.safe_load(open("coco.yaml", encoding="utf-8"))['names']
+
+C = Slider("conf","input",0.5,0,1,0.01)
+
 grabando = False
 video_out = None
 tiempo_actual = 0
 tiempo_inicio_grabacion = 0
 
+etiquetas_aceptadas = ["person","bicycle","car","motorcycle","bus","truck","bird","cat","dog","horse"]
+
 for key, frame in autoStream():
+    rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
     if region.roi:
         [x1, y1, x2, y2] = region.roi
         
@@ -30,27 +45,31 @@ for key, frame in autoStream():
         putText(frame, f'{x2-x1+1}x{y2-y1+1}', orig=(x1, y1-8))
 
 
-    fgmask = bgsub.apply(frame)
-    kernel_small = np.ones((3,3), np.uint8) # Filtro leve apertura
-    fgmask = cv.morphologyEx(fgmask, cv.MORPH_OPEN, kernel_small)
+    [result] = model(rgb, verbose=False)
 
-    contornos, contorno = cv.findContours(fgmask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-    
-    for c in contornos:
-        if cv.contourArea(c) > 150:
-            x, y, w, h = cv.boundingRect(c)
-            cx, cy = x + w // 2, y + h // 2
-            if region.roi and not grabando:
-                [x1, y1, x2, y2] = region.roi
-                if x1 <= cx <= x2 and y1 <= cy <= y2:
+    for b in result.boxes:
+        conf = b.conf.cpu().numpy()[0]
+        if conf < C.value:
+            continue
+
+        [[x1,y1,x2,y2]] = np.array(b.xyxy.cpu()).astype(int)
+        cv.rectangle(frame, (x1,y1), (x2, y2), color=(0,0,255))
+        idx = round(b.cls.cpu().numpy()[0])
+        etiqueta = labels[idx]
+        putText(frame,f"{etiqueta} {conf:.2f}", (x1+4,y1+15))
+        if etiqueta == "person":
+            roi_persona = frame[y1:y2, x1:x2]
+            #Aplicamos el difuminado
+            frame[y1:y2, x1:x2] = cv.GaussianBlur(roi_persona, (51, 51), 0)
+        
+        if region.roi and not grabando:
+            [rx1, ry1, rx2, ry2] = region.roi
+            if etiqueta in etiquetas_aceptadas:
+                if x1 >= rx1 and x2 <= rx2 and y1 >= ry1 and y2 <= ry2:
                     print("Objeto detectado. Iniciando Grabación...")
                     grabando = True
                     tiempo_inicio_grabacion = datetime.now()
-                    
-                    # Generar nombre identificativo en tu ordenador por fecha/hora
-                    nombre_archivo = f"alerta_{tiempo_inicio_grabacion.strftime('%Y%m%d_%H%M%S')}.avi"
-                    
-                    # Arrancar la escritura a disco a la Tasa de 25 Frames por Segundo (FPS) y codec XVID universal (.avi)
+                    nombre_archivo = f"alerta_{tiempo_inicio_grabacion.strftime('%Y%m%d_%H%M%S')}_{etiqueta}.avi"
                     H, W = frame.shape[:2]
                     fourcc = cv.VideoWriter_fourcc(*'XVID')
                     video_out = cv.VideoWriter(nombre_archivo, fourcc, 25.0, (W, H))
