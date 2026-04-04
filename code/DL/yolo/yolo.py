@@ -14,7 +14,7 @@ model = YOLO("yolo11n.pt")
 # class labels:
 url = "https://raw.githubusercontent.com/ultralytics/ultralytics/refs/heads/main/ultralytics/cfg/datasets/coco.yaml"
 check_and_download("coco.yaml", url)
-labels = yaml.safe_load(open("coco.yaml"))['names']
+labels = yaml.safe_load(open("coco.yaml", encoding="utf-8"))['names']
 
 
 C = Slider("conf","YOLO 11",0.5,0,1,0.01)
