@@ -118,3 +118,6 @@ token.env
 
 #grabaciones
 *.avi
+
+#modelos
+code/clasificador/modelos/*
