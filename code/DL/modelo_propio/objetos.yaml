@@ -1,0 +1,8 @@
+path: ./
+train: train
+val: val
+
+names:
+    0: botellin_agua
+    1: libro_sanderson
+    2: mando_ventilador

@@ -121,3 +121,7 @@ token.env
 
 #modelos
 code/clasificador/modelos/*
+
+#dataset_modelo_propio
+code/DL/modelo_propio/train
+code/DL/modelo_propio/val
