@@ -28,7 +28,7 @@ class MetodoManos(MetodoClasificacion):
     
 
     def precomputar_modelo(self, nombre, imagen):
-        """VERSIÓN DEPURADO"""
+        """VERSIÓN DEPURADO
         if imagen is None: return
         #imagen = cv.flip(imagen, 1)
         image_rgb = cv.cvtColor(imagen, cv.COLOR_BGR2RGB)
@@ -61,8 +61,8 @@ class MetodoManos(MetodoClasificacion):
 
         else:
             print(f"[AVISO] MediaPipe no ha logrado detectar ninguna mano en la imagen '{nombre}'.")    
-
         """
+        
         if imagen is None: return
         image_rgb = cv.cvtColor(imagen, cv.COLOR_BGR2RGB)
         results = self.hands.process(image_rgb)
@@ -70,7 +70,7 @@ class MetodoManos(MetodoClasificacion):
         if results.multi_hand_landmarks:
             self.modelos_gestos[nombre] = extraer_puntos(results.multi_hand_landmarks[0])
             print(f"[Manos] Precomputado gesto '{nombre}'.")
-        """
+        
         
     
     def clasificar(self, frame):
@@ -102,7 +102,7 @@ class MetodoManos(MetodoClasificacion):
                         mejor_distancia = disparidad
                         etiqueta_detectada = etiqueta_modelo
 
-                umbral_aceptacion = 0.13
+                umbral_aceptacion = 0.15
                 if mejor_distancia < umbral_aceptacion:
                     # Pintamos la etiqueta ganadora en la pantalla
                     cv.putText(frame, f"Gesto: {etiqueta_detectada.upper()}. Distancia: {mejor_distancia:.2f}", (20, 50), 

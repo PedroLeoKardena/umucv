@@ -10,10 +10,10 @@ def nothing(x): pass
 
 cv.namedWindow('medidor')
 
-cv.createTrackbar('fov', 'medidor', 46, 80, nothing)
-cv.createTrackbar('Z', 'medidor', 22, 290, nothing)
-cv.createTrackbar('A', 'medidor', 8, 20, nothing)
-cv.createTrackbar('X', 'medidor', 50, 100, nothing) 
+cv.createTrackbar('fov', 'medidor', 72, 80, nothing) # fov_deg = 72 + 10 = 82
+cv.createTrackbar('Z', 'medidor', 0, 290, nothing) 
+cv.createTrackbar('A', 'medidor', 0, 20, nothing)    
+cv.createTrackbar('X', 'medidor', 50, 100, nothing)  
 
 points = deque(maxlen=2)
 
@@ -38,8 +38,8 @@ for key, frame in autoStream():
         A_tb = cv.getTrackbarPos('A', 'medidor')
         X_tb = cv.getTrackbarPos('X', 'medidor')
     except:
-        # Prevención de fallos
-        fov_tb, Z_tb, A_tb, X_tb = 46, 22, 8, 50
+        # fov=72 -> 82 grados
+        fov_tb, Z_tb, A_tb, X_tb = 72, 0, 0, 50
     
     # Conversiones al espacio real
     fov_deg = fov_tb + 10
@@ -98,7 +98,6 @@ for key, frame in autoStream():
         u1, v1 = points[0]
         u2, v2 = points[1]
         
-        # Ray casting hasta plano Z definido en la interacciÃ³n del usuario
         x1_real = (u1 - cx) * Z / f
         y1_real = (v1 - cy) * Z / f
         x2_real = (u2 - cx) * Z / f
@@ -107,11 +106,9 @@ for key, frame in autoStream():
         dist_m = math.dist((x1_real, y1_real), (x2_real, y2_real))
         mx, my = (u1 + u2) // 2, (v1 + v2) // 2
         
-        # Formateo como cm para resoluciones del submúltiplo
         texto_dist = f"{dist_m*100:.0f} cm" if dist_m < 1 else f"{dist_m:.2f} m"
         cv.putText(display, texto_dist, (mx, my - 10), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv.LINE_AA)
         
-    # Superposición HUD de variables globales (Arriba Izquierda)
     cv.putText(display, f"FOV={fov_deg:.1f} deg, f={int(f)}px ({w}x{h})", (10, 20), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv.LINE_AA)
     cv.putText(display, f"Z={Z:.1f} m", (10, 40), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv.LINE_AA)
     cv.putText(display, f"alt={alt:.1f} m", (10, 60), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv.LINE_AA)

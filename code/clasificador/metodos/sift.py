@@ -1,6 +1,9 @@
 import cv2 as cv
 from .base import MetodoClasificacion
 
+from PIL import Image
+
+
 class MetodoSIFT(MetodoClasificacion):
     #Funcion de iniciación
     def __init__(self):
@@ -10,10 +13,42 @@ class MetodoSIFT(MetodoClasificacion):
     
     def precomputar_modelo(self, nombre, imagen):
         if imagen is None: return
+
+        ancho_deseado = 640
+        alto, ancho = imagen.shape[:2]
+
+        if ancho > ancho_deseado:
+            escala = ancho_deseado / ancho
+            nuevo_alto = int(alto * escala)
+            imagen = cv.resize(imagen, (ancho_deseado, nuevo_alto))
+        
         kp, des = self.sift.detectAndCompute(imagen, mask=None)
+
         if des is not None:
             self.modelos[nombre] = (kp, des, imagen)
             print(f"[SIFT] Precomputado modelo '{nombre}' con {len(kp)} puntos.")
+
+            """Depurado visual de los puntos
+            frame_con_puntos = cv.drawKeypoints(imagen, kp, None, color=(100,150,255), flags=cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+            
+            nombre_ventana = f"Puntos de {nombre}"
+            cv.namedWindow(nombre_ventana, cv.WINDOW_NORMAL)
+            
+            cv.resizeWindow(nombre_ventana, 800, 600)
+            
+            cv.imshow(nombre_ventana, frame_con_puntos)         
+
+            print(">>> Pulsa la tecla ESPACIO para cargar el siguiente modelo...")
+            
+            while True:
+                tecla = cv.waitKey(0) & 0xFF
+                if tecla == 32: # 32 es el código ASCII del espacio
+                    break
+                    
+            cv.destroyWindow(f"Puntos de {nombre}")
+            """
+        else:
+            print(f"[SIFT] No se pudo precomputar el modelo '{nombre}'.")
 
     def clasificar(self, frame):
         #Codigo extraido de sift.py (carpeta SIFT)
@@ -42,7 +77,7 @@ class MetodoSIFT(MetodoClasificacion):
                 mejor_img0 = img0
                 mejores_matches = good
         
-        if max_buenos > 10:
+        if max_buenos > 20:
             frame_salida = cv.drawMatches(frame, kp_frame, mejor_img0, mejor_k0, mejores_matches,
                                           flags=0, matchColor=(128,255,128),
                                           singlePointColor=(128,128,128), outImg=None)

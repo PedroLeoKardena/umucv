@@ -105,15 +105,12 @@ for key, frame in autoStream():
                     video_out = cv.VideoWriter(nombre_archivo, fourcc, 10.0, (W, H))
 
 
-    #Modulo Grabador
     if grabando:
-        # Añade el fotograma original actual a la película en proceso
         if video_out is not None:
             video_out.write(frame)
         
         tiempo_actual = datetime.now()
         if (tiempo_actual - tiempo_inicio_grabacion).total_seconds() > 5.0:
-            #Se deja de capturar frames
             grabando = False 
             if video_out is not None:
                 video_out.release() 
@@ -122,15 +119,12 @@ for key, frame in autoStream():
             
 
 
-    # 5. UI de Ayuda a Usuario
     putText(frame, f'{w}x{h}')
     cv.putText(frame, 'Si quieres cerrar la aplicacion pulse: "q"', (10, 60), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv.LINE_AA)
     cv.putText(frame, 'Si quieres quitar la seleccion pulse: "x"', (10, 80), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv.LINE_AA)
 
-    # Printear la ventana con el fotograma coloreado final a tus ojos
     cv.imshow('input', frame)
 
-# Mecanismo Safe-Shutdown: Si estas grabando a la fuerza cierras la ventana bruscamente ('Esc' o 'q'), evita el 'Video Corrupto'
 if video_out is not None:
     video_out.release()
 

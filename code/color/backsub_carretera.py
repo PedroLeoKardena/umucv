@@ -22,7 +22,7 @@ for key,frame in autoStream():
     fgmask = cv.morphologyEx(fgmask, cv.MORPH_OPEN, kernel_small)
     
     #Kernel que nos permite rellenar los huecos negros "DENTRO" de los coches para no partirlos en trozos
-    kernel_large = np.ones((9,9), np.uint8)
+    kernel_large = np.ones((7,7), np.uint8)
     fgmask = cv.morphologyEx(fgmask, cv.MORPH_CLOSE, kernel_large)
 
     # Obtenemos la resolución dinámicamente a partir del 'frame'
@@ -39,7 +39,7 @@ for key,frame in autoStream():
     
     #Por cada contorno de un area mayor que cierta cantidad de pixeles, los procesamos
     for c in contornos:
-        if cv.contourArea(c) > 300:
+        if cv.contourArea(c) > 200:
             cv.drawContours(mask_color, c, -1, (0, 255, 0), 2)
             x, y, w, h = cv.boundingRect(c)
             cx, cy = x + w // 2, y + h // 2

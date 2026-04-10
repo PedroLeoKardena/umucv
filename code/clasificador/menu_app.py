@@ -9,7 +9,7 @@ from metodos import sift, hands, embedder
 
 METODOS_DISPONIBLES = {
     "SIFT": sift.MetodoSIFT,
-    "MEDIAPIPE": embedder.MetodoEmbedder,
+    "EMBEDDER": embedder.MetodoEmbedder,
 }
 
 def my_arguments(parser):
@@ -32,7 +32,12 @@ if __name__ == "__main__":
 
     if not os.path.isdir(args.models):
         print(f"Error: La ruta '{args.models}' no existe o no es una carpeta.")
-        sys.exit(1)
+        opcion = input("Deseas crear dicha carpeta [Y/n].")
+        if opcion == "Y":
+            os.makedirs(args.models)
+            print(f"Carpeta '{args.models}' creada.")
+        else:
+            sys.exit(1)
 
     imagenes_paths = glob.glob(os.path.join(args.models, '*.png')) + \
                     glob.glob(os.path.join(args.models, '*.jpg')) + \
@@ -47,8 +52,9 @@ if __name__ == "__main__":
         print("Introduzca opción:")
         print(f"\t1. Reconocimiento de objetos con método introducido: {args.method}")
         print(f"\t2. Reconocedor de gestos de manos.")
-        print(f"\t3. Añadir nuevo método. Esto requerirá reiniciar la aplicación.")
-        print(f"\t4. Salir")
+        print(f"\t3. Añadir nuevos modelos a la carpeta de modelos introducida: {args.models}")
+        print(f"\t4. Añadir nuevo método.")
+        print(f"\t5. Salir")
 
         opcion = input("Opción: ")
         if opcion == "1":
@@ -80,14 +86,13 @@ if __name__ == "__main__":
                 clasificador.precomputar_modelo(etiqueta, img)
 
             iniciar_camara(clasificador)  
-
         elif opcion == "3":
-            print("\n[INFO] Para añadir un método nuevo:")
-            print("1. Crea un archivo 'nuevo_metodo.py' en la carpeta 'metodos/'.")
-            print("2. Haz que herede de 'MetodoClasificacion'.")
-            print("3. Añádelo al diccionario METODOS_DISPONIBLES en 'app.py'.")
-            print("4. Reinicia la aplicación.")
+            #TODO
+            continue
         elif opcion == "4":
+            #TODO
+            continue
+        elif opcion == "5":
             print("Saliendo")
             sys.exit(0)
         else:

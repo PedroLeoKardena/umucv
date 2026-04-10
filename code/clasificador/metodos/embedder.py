@@ -17,6 +17,15 @@ class MetodoEmbedder(MetodoClasificacion):
 
     def precomputar_modelo(self, nombre, imagen):
         if imagen is None: return
+
+        ancho_deseado = 640
+        alto, ancho = imagen.shape[:2]
+
+        if ancho > ancho_deseado:
+            escala = ancho_deseado / ancho
+            nuevo_alto = int(alto * escala)
+            imagen = cv.resize(imagen, (ancho_deseado, nuevo_alto))
+
         mpimage = mp.Image(image_format=mp.ImageFormat.SRGB, data=cv.cvtColor(imagen, cv.COLOR_BGR2RGB))
         res = self.embedder.embed(mpimage)
         if res.embeddings:
@@ -41,8 +50,13 @@ class MetodoEmbedder(MetodoClasificacion):
                 max_similitud = similitud
                 mejor_nombre = nombre
 
+        #PARA DEPURAR:
+        #print(f"Mejor coincidencia: {mejor_nombre} -> Similitud: {max_similitud:.3f}")
+        
         W = frame.shape[1]
-        if max_similitud > 0.6: 
+
+        umbral = 0.20
+        if max_similitud > umbral: 
             cv.rectangle(frame, (0,0), (int(max_similitud*W), 20), color=(0,255,0), thickness=-1)
             cv.putText(frame, f"{mejor_nombre} ({max_similitud:.2f})", (10, 50), 
                        cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
