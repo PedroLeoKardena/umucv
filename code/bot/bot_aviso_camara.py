@@ -97,12 +97,15 @@ for key, frame in autoStream():
                     bot.send_message(MI_ID, f'Alerta: {etiqueta} detectada en la zona de interés.')
                     bot.send_photo(chat_id=MI_ID, photo=byte_io)
 
-                    grabando = True
-                    tiempo_inicio_grabacion = datetime.now()
-                    nombre_archivo = f"alerta_{tiempo_inicio_grabacion.strftime('%Y%m%d_%H%M%S')}_{etiqueta}.avi"
+                    nombre_archivo = f"alerta_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{etiqueta}.avi"
                     H, W = frame.shape[:2]
                     fourcc = cv.VideoWriter_fourcc(*'XVID')
                     video_out = cv.VideoWriter(nombre_archivo, fourcc, 10.0, (W, H))
+                    tiempo_inicio_grabacion = datetime.now()
+
+                    grabando = True
+
+
 
 
     if grabando:
