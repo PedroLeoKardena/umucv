@@ -1,0 +1,30 @@
+from abc import ABC, abstractmethod
+
+#El nombre de la clase debe ser Metodo{NombreMetodo}, por ejemplo: MetodoSift, MetodoEmbedder, etc. Debe heredar de MetodoClasificacion
+
+class MetodoClasificacion(ABC): 
+    
+    @abstractmethod
+    def precomputar_modelo(self, nombre, imagen):
+        """
+        Precomputa el modelo para una imagen.
+        
+        Args:
+            nombre: Nombre del modelo.
+            imagen: Imagen para precomputar.
+        """
+        pass
+
+    @abstractmethod
+    def clasificar(self, frame):
+        """
+        Clasifica el frame.
+        
+        Args:
+            frame: Frame para clasificar.
+        
+        Returns:
+            frame: Frame con la clasificación.
+            nombre: Nombre del modelo clasificado.
+        """
+        pass

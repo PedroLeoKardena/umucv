@@ -1,4 +1,5 @@
 import cv2 as cv
+# pyrefly: ignore [missing-import]
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
