@@ -40,12 +40,6 @@ def fun(event, x, y, flags, param):
 cv.namedWindow("Deformacion")
 cv.setMouseCallback("Deformacion", fun)
 
-print("\n" + "="*50)
-print(" INSTRUCCIONES:")
-print(" Haz clic en 2 puntos en la ventana 'Deformacion' para medir la distancia real entre ellos.")
-print(" Pulsa 'q' en la ventana para salir.")
-print("="*50 + "\n")
-
 # Cargar la imagen estática
 frame = cv.imread(args.imagen)
 if frame is None:
