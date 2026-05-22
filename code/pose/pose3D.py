@@ -5,7 +5,7 @@
 
 # python pose3D.py --dev=../../images/rot4.mjpg
 
-
+from PyQt5 import QtWidgets
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 from pyqtgraph.Qt import QtCore, QtGui
@@ -92,7 +92,7 @@ K = Kfov(size,60)
 
 
 ## Create a GL View widget to display data
-app = QtGui.QApplication([])
+app = QtWidgets.QApplication([])
 win = gl.GLViewWidget()
 win.show()
 win.setWindowTitle('pose')
@@ -221,5 +221,5 @@ timer = QtCore.QTimer()
 timer.timeout.connect(update)
 timer.start(10)
 
-QtGui.QApplication.instance().exec_()
+QtWidgets.QApplication([]).instance().exec_()
 
